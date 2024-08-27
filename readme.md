@@ -46,7 +46,7 @@ For example, in order to run experiments in Figure 7, you can refer to the follo
 chmod 775 experiments/Figure7.sh
 ./experiments/Figure7.sh
 ```
-You can also refter to the following commands to conduct all experiments at once. Please note that running all the experiments is a time-consuming task.
+You can also refer to the following commands to conduct all experiments at once. Please note that running all the experiments is a time-consuming task.
 
 ```sh
 chmod 775 experiments/run_all.sh
