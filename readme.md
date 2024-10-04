@@ -5,8 +5,8 @@
 **[01/10/2024] News: To simplify the environment setup process, we have made the Docker image public. You can complete the environment setup and run experiments with just three lines of commands.**
 
 ```sh
-docker pull anonymoumous0/fedcap:10_01
-docker run -it anonymoumous0/fedcap:10_01
+docker pull anonymoumous0/fedcap:10_03
+docker run -it anonymoumous0/fedcap:10_03
 ./experiments/Figure7.sh
 ...
 ```
