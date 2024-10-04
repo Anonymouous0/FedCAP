@@ -12,3 +12,4 @@ matplotlib
 yagmail
 cvxpy
 hdmedians
+numpy==1.24.4

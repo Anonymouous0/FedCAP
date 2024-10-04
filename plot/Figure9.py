@@ -8,19 +8,57 @@ DATASET = ['CIFAR-10', 'EMNIST', 'WISDM']
 INFO = DATASET
 
 ATK = ['SF', 'MR', 'LIE', 'Min-Max', 'Min-Sum', 'IPM']
-ACC = [[84.00, 84.10, 84.95, 84.00, 84.38, 84.29], # CIFAR10, EMNIST, WISDM
-       [85.24, 85.82, 85.16, 85.39, 85.58, 85.43],
-       [94.16, 95.07, 94.76, 94.06, 94.26, 94.06]]
-DAcc = [[100, 100, 70, 100, 100, 100],
-        [80, 100, 81, 93, 96, 98],
-        [100, 100, 72.22, 100, 100, 100]]
-Benign = [85.6, 86.59, 93.78]
+jrs = [1.0, 0.2, 1.0]
+ncs = [20, 100, 36]
+sufs = [['_lamda1.0_alpha10_phi0.1_normT10',
+        '_lamda10.0_alpha10_phi0.3_normT10',
+        '_lamda0.1_alpha10_phi0.2_normT10',
+        '_lamda0.1_alpha10_phi0.3_normT10',
+        '_lamda0.1_alpha10_phi0.3_normT10',
+        '_lamda0.1_alpha10_phi0.3_normT10'],
+        
+        ['_lamda0.1_alpha10_phi0.3_normT10',
+         '_lamda0.1_alpha10_phi0.1_normT10',
+         '_lamda0.5_alpha10_phi0.1_normT10',
+         '_lamda0.5_alpha10_phi0.3_normT10',
+         '_lamda0.5_alpha10_phi0.1_normT10',
+         '_lamda0.5_alpha10_phi0.1_normT10'],
+        
+        ['_lamda0.1_alpha2_phi0.2_normT10',
+         '_lamda0.1_alpha2_phi0.1_normT10',
+         '_lamda0.1_alpha1_phi0.2_normT10',
+         '_lamda0.5_alpha2_phi0.2_normT10',
+         '_lamda0.5_alpha2_phi0.3_normT10',
+         '_lamda0.1_alpha2_phi0.1_normT10']
+        ]
+
+ACC = []
+for idx, d in enumerate(['cifar10_pat', 'emnist_group', 'wisdm_nature']):
+    ACC.append([])
+    for jdx, atk in enumerate(['A4', 'A3', 'A5', 'A6', 'A7', 'A8']):
+           jr = jrs[idx]
+           nc = ncs[idx]
+           suf = sufs[idx][jdx]
+           file = "../results/npz/{}_FedCAP_{}_0.3_bz10_lr0.01_gr100_ep5_jr{}_nc{}_seed0{}.npz".format(d, atk, jr, nc, suf)
+           with np.load(file, allow_pickle=True) as f:
+              test_acc_g = f['test_acc_g'][-1]*100
+              test_acc_p = f['test_acc_p'][-1]*100
+              # test_acc_g = np.random.uniform(low=0, high=1, size=101)[-1]*100
+              # test_acc_p = np.random.uniform(low=0, high=1, size=101)[-1]*100
+              max_test_accs = max(test_acc_g, test_acc_p)
+           ACC[idx].append(max_test_accs)
+
+# We did not save these results when we conducted experiments, so we manually recorded these value.
 FPR = [[0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0]]
 FNR = [[0, 0, 100, 0, 0, 0],
        [20, 0, 63.33, 23.33, 13.33, 6.67],
        [0, 0, 100, 0, 0, 0]]
+DAcc = [[100, 100, 70, 100, 100, 100],
+        [80, 100, 81, 93, 96, 98],
+        [100, 100, 72.22, 100, 100, 100]]
+
 
 width = [0.15, 0.15, 0.15, 0.15]
 ind = np.arange(len(ATK))
@@ -56,7 +94,7 @@ for idx1, dataset in enumerate(DATASET):
                     chartBox.width,
                     chartBox.height * 0.65])
     ax.set_ylabel(INFO[idx1], fontsize=16)
-    ax.axhline(Benign[idx1], color='red')
+    ax.axhline([85.6, 86.59, 93.78][idx1], color='red')
     # ax.set_title(dataset, size=18)
 
 # fig.text(0.53, 0, 'Clustering Identity', va='center', ha='center', fontsize=32)
@@ -69,4 +107,4 @@ fig.legend(lines, labels, ncol=4, bbox_to_anchor=(0.87, 1), fontsize=14)
 # plt.legend()
 
 # plt.show()
-plt.savefig('Figure9.pdf', bbox_inches='tight', pad_inches=0.0)
+plt.savefig('Figure9-.pdf', bbox_inches='tight', pad_inches=0.0)

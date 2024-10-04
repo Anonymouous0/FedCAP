@@ -7,16 +7,42 @@ fig = plt.figure(figsize=(8, 2.5))
 
 x = ['2', '5', '10']
 
-data = {'CIFAR-10': [[82.27, 84.47, 85.60],
-                    [82.86, 82.86, 84.89],
-                    (82, 86)],
-        'EMNIST': [[84.74, 84.86, 86.59],
-                   [83.20, 84.29, 85.36],
-                   (83, 87)],
-        'WISDM': [[93.78, 93.78, 93.64, 92.68],
-                  [93.76, 94.06, 93.76, 93.25],
-                  (92, 95)]}
+atkrs = [0.0, 0.3]
+jrs = [1.0, 0.2, 1.0]
+ncs = [20, 100, 36]
+sufs = [[['_lamda1.0_alpha2_phi0.3_normT10', '_lamda1.0_alpha5_phi0.3_normT10', '_lamda1.0_alpha10_phi0.3_normT10'],
+        ['_lamda0.1_alpha2_phi0.3_normT10', '_lamda0.1_alpha5_phi0.3_normT10', '_lamda0.1_alpha10_phi0.3_normT10']],
+        
+        [['_lamda0.5_alpha2_phi0.1_normT10', '_lamda0.5_alpha5_phi0.1_normT10', '_lamda0.5_alpha10_phi0.1_normT10'],
+        ['_lamda0.5_alpha2_phi0.1_normT10', '_lamda0.5_alpha5_phi0.1_normT10', '_lamda0.5_alpha10_phi0.1_normT10']],
+        
+        [['_lamda0.1_alpha1_phi0.1_normT10', '_lamda0.1_alpha2_phi0.1_normT10', '_lamda0.1_alpha3_phi0.1_normT10', '_lamda0.1_alpha4_phi0.1_normT10'],
+        ['_lamda0.1_alpha1_phi0.1_normT10', '_lamda0.1_alpha2_phi0.1_normT10', '_lamda0.1_alpha3_phi0.1_normT10', '_lamda0.1_alpha4_phi0.1_normT10']]
+        ]
 
+plot_range = [(82, 86), (83, 87), (92, 95)]
+data = {}
+for idx, d in enumerate(['cifar10_pat', 'emnist_group', 'wisdm_nature']):
+    data[['CIFAR-10', 'EMNIST', 'WISDM'][idx]] = []
+    for jdx, atk in enumerate(['B', 'A8']):
+        data[['CIFAR-10', 'EMNIST', 'WISDM'][idx]].append([])
+        for kdx in range(len(sufs[idx][jdx])):
+            atkr = atkrs[jdx]
+            jr = jrs[idx]
+            nc = ncs[idx]
+            suf = sufs[idx][jdx][kdx]
+            file = "../results/npz/{}_FedCAP_{}_{}_bz10_lr0.01_gr100_ep5_jr{}_nc{}_seed0{}.npz".format(d, atk, atkr, jr, nc, suf)
+            with np.load(file, allow_pickle=True) as f:
+                test_acc_g = f['test_acc_g'][-1]*100
+                test_acc_p = f['test_acc_p'][-1]*100
+                # test_acc_g = np.random.uniform(low=0, high=1, size=101)[-1]*100
+                # test_acc_p = np.random.uniform(low=0, high=1, size=101)[-1]*100
+                max_test_accs = max(test_acc_g, test_acc_p)
+            data[['CIFAR-10', 'EMNIST', 'WISDM'][idx]][jdx].append(max_test_accs)
+            
+    data[['CIFAR-10', 'EMNIST', 'WISDM'][idx]].append(plot_range[idx])
+
+# print(data)
 dataset = list(data.keys())
 
 for i in range(len(dataset)):
@@ -46,4 +72,4 @@ lines, labels = fig.axes[0].get_legend_handles_labels()
 fig.legend(lines, labels, ncol=4, bbox_to_anchor=(0.73, 1), fontsize=16)
 fig.tight_layout()
 # plt.show()
-plt.savefig('Figure11.pdf', bbox_inches='tight', pad_inches=0.0)
+plt.savefig('Figure11-.pdf', bbox_inches='tight', pad_inches=0.0)

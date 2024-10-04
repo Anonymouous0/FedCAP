@@ -21,7 +21,7 @@ done
 algorithm="FLTrust"
 for attack_type in "${attack_types[@]}"; do
     for dataset in "${datasets[@]}"; do
-        echo python3 system/main.py --device $device --device_id $device_id --seed $seed --dataset $dataset --algorithm $algorithm --attack_type $attack_type --attack_ratio $attack_ratio
+        python3 system/main.py --device $device --device_id $device_id --seed $seed --dataset $dataset --algorithm $algorithm --attack_type $attack_type --attack_ratio $attack_ratio
     done
 done
 
